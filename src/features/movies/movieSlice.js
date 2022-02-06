@@ -4,10 +4,11 @@ import movieApi from "../../common/apis/movieApi";
 
 export const fetchAsyncMovies = createAsyncThunk(
   'movies/fetchAsyncMovies',
-  async () => {
-    const movieText = "Harry";
-    const res = await movieApi.get(`?apiKey=${process.env.REACT_APP_OMDB_KEY}&s=${movieText}&type=movie`);
-    console.log({ res })
+  async (term) => {
+    // const movieText = "Harry";
+    // const res = await movieApi.get(`?apiKey=${process.env.REACT_APP_OMDB_KEY}&s=${movieText}&type=movie`);
+    const res = await movieApi.get(`?apiKey=${process.env.REACT_APP_OMDB_KEY}&s=${term}&type=movie`);
+    console.log({ movies: res })
     return res.data
   }
 );
@@ -15,9 +16,10 @@ export const fetchAsyncMovies = createAsyncThunk(
 
 export const fetchAsyncShows = createAsyncThunk(
   'movies/fetchAsyncShows',
-  async () => {
-    const aeriesText = "Friends";
-    const res = await movieApi.get(`?apiKey=${process.env.REACT_APP_OMDB_KEY}&s=${aeriesText}&type=series`);
+  async (term) => {
+    // const aeriesText = "Friends";
+    // const res = await movieApi.get(`?apiKey=${process.env.REACT_APP_OMDB_KEY}&s=${aeriesText}&type=series`);
+    const res = await movieApi.get(`?apiKey=${process.env.REACT_APP_OMDB_KEY}&s=${term}&type=series`);
     console.log({ series: res })
     return res.data
   }
@@ -35,7 +37,8 @@ export const fetchAsyncMovieOrShowDetail = createAsyncThunk(
 
 const initialState = {
   movies: {},
-  shows: {}
+  shows: {},
+  selectMovieOrShow: {}
 }
 
 const movieSlice = createSlice({ 
@@ -51,30 +54,41 @@ const movieSlice = createSlice({
   },
   extraReducers: {
     [fetchAsyncMovies.pending]: () => {
-      console.log('Pending')
+      // console.log('Pending')
     },
     [fetchAsyncMovies.fulfilled]: (state, { payload }) => {
-      console.log('fetched successfully')
+      // console.log('fetched successfully')
       return {...state, movies: payload }
     },
     [fetchAsyncMovies.rejected]: () => {
-      console.log('Rejected')
+      // console.log('Rejected')
     },
 
     [fetchAsyncShows.fulfilled]: (state, { payload }) => {
-      console.log('fetched successfully')
+      // console.log('fetched successfully')
       return {...state, shows: payload }
     },
     [fetchAsyncShows.pending]: () => {
-      console.log('Fetching Shows Pending')
+      // console.log('Fetching Shows Pending')
     },
     [fetchAsyncShows.rejected]: () => {
-      console.log('Fetching Shows Rejected')
+      // console.log('Fetching Shows Rejected')
     },
 
     [fetchAsyncMovieOrShowDetail.fulfilled]: (state, { payload }) => {
-      console.log("Fetched Successfully!");
-      return { ...state, selectMovieOrShow: payload };
+      console.log("fetchAsyncMovieOrShowDetail Successfully!");
+      // state.selectMovieOrShow.loading = 'success'
+      // return { ...state, selectMovieOrShow: payload };
+      state.selectMovieOrShow = payload;
+      state.selectMovieOrShow.loading = 'fulfilled'
+    },
+    [fetchAsyncMovieOrShowDetail.pending]: (state) => {
+      console.log('fetchAsyncMovieOrShowDetail Shows Pending')
+      state.selectMovieOrShow.loading = 'pending'
+    },
+    [fetchAsyncMovieOrShowDetail.rejected]: (state, { error }) => {
+      console.log('fetchAsyncMovieOrShowDetail Shows Rejected')
+      state.selectMovieOrShow.loading = 'rejected'
     },
   }
 

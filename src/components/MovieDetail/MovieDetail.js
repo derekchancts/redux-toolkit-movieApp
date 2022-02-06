@@ -7,15 +7,30 @@ import {
   getSelectedMovieOrShow,
   removeSelectedMovieOrShow,
 } from "../../features/movies/movieSlice";
+import { ClipLoader, DotLoader, FadeLoader } from 'react-spinners';
+// import { css } from 'react-emotion';
+
+
+// const loaderCSS = css`
+//     display: block;
+//     margin: 0 auto;
+//     border-color: red;
+// `;
 
 
 const MovieDetail = () => {
   const { imdbID } = useParams();
-  console.log(imdbID)
-  
-  const dispatch = useDispatch()
+  // console.log(imdbID);
+
+  const dispatch = useDispatch();
   const data = useSelector(getSelectedMovieOrShow);
   // console.log(data);
+
+  const loading = useSelector(
+    (state) => state.movies.selectMovieOrShow.loading
+  );
+  // console.log({ loading });
+
 
   useEffect(() => {
     dispatch(fetchAsyncMovieOrShowDetail(imdbID));
@@ -24,12 +39,22 @@ const MovieDetail = () => {
     };
   }, [dispatch, imdbID]);
 
-  
   return (
     <div className="movie-section">
-      { data && Object.keys(data).length === 0 ? (
-        <div>...Loading</div>
-      ) : ( data && 
+      {loading === "pending" && 
+        <FadeLoader
+        // className={loaderCSS}
+          sizeUnit={"px"}
+          size={150}
+          // color={'#123abc'}
+          color={'#79b8f3'}
+          loading={true}
+      />
+      }
+
+      {loading === "rejected" && <div>...Rejected</div>}
+
+      {loading === "fulfilled" && (
         <>
           <div className="section-left">
             <div className="movie-title">{data.Title}</div>
@@ -72,7 +97,6 @@ const MovieDetail = () => {
                 <span>{data.Awards}</span>
               </div>
             </div>
-
           </div>
 
           <div className="section-right">
@@ -81,7 +105,7 @@ const MovieDetail = () => {
         </>
       )}
     </div>
-  )
+  );
 };
 
 export default MovieDetail;
