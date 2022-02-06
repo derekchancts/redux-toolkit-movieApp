@@ -9,6 +9,9 @@ import { fetchAsyncMovies, fetchAsyncShows } from '../../features/movies/movieSl
 
 const Home = () => {
   const dispatch = useDispatch();
+
+  const movieText = 'Harry';
+  const showText = 'Friends'
   
   useEffect(() => {
     // const movieText = "Harry";
@@ -24,15 +27,16 @@ const Home = () => {
     // };
 
     // fetchMovies()
-    dispatch(fetchAsyncMovies())
-    dispatch(fetchAsyncShows())
-  }, []);
+    dispatch(fetchAsyncMovies(movieText))
+    dispatch(fetchAsyncShows(showText))
+  }, [dispatch]);
 
 
   return (
     <>
       <div className="banner-img"></div>
-      <MovieListing />
+      <MovieListing/>
+      
     </>
   );
 };
